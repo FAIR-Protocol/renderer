@@ -1,5 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
-import { Box, ImageList, ImageListItem, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import LoadingScreen from "./loading-screen";
@@ -183,13 +186,17 @@ const Asset = () => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      padding: '0 16px'
+      padding: '0 16px',
     }}>
-      <Typography variant="h5" sx={{ textAlign: 'center' }}>Could Not Display Model</Typography>
+      <Typography variant="h5" sx={{ textAlign: 'center', color: '#EDEDED' }}>Could Not Display Model</Typography>
     </Box>
-  } else if (!isReady) {
+  }
+  
+  if (!isReady) {
     return <LoadingScreen />;
-  } else if (txs.length >= 5) {
+  }
+  
+  if (txs.length >= 5) {
     return <Box sx={{
       width: '100%',
       height: '100%',
@@ -204,20 +211,22 @@ const Asset = () => {
         </ImageListItem>)}
       </ImageList>
     </Box>;
-  } else if (txs.length > 0) {
+  }
+  
+  if (txs.length > 0) {
     return <ImageItem txid={txs[0]} withShadow={true} />;
-  } else {
-    return <Box sx={{
+  }
+  
+  return <Box sx={{
     width: '100%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: '0 16px'
+    padding: '0 16px',
   }}>
-    <Typography variant="h5" sx={{ textAlign: 'center' }}>Could Not Display Model</Typography>
+    <Typography variant="h5" sx={{ textAlign: 'center', color: '#EDEDED' }}>Could Not Display Model</Typography>
   </Box>;
-  }
 };
 
 export default Asset;

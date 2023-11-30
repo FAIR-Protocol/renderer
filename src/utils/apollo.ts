@@ -8,7 +8,7 @@ export const client = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'network-only',
-      errorPolicy: 'ignore',
+      errorPolicy: 'all',
     },
     query: {
       fetchPolicy: 'cache-first',

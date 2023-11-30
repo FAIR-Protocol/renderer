@@ -1,4 +1,5 @@
-import { Box, Icon } from "@mui/material"
+import Box from "@mui/material/Box";
+import Icon from "@mui/material/Icon";
 
 const LoadingScreen = () => {
   return <Box sx={{
