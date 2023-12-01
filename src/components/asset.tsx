@@ -4,9 +4,9 @@ import Typography from "@mui/material/Typography";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import LoadingScreen from "./loading-screen";
 import { client } from "../utils/apollo";
+import useQueryParams from "@/hooks/useQueryParams";
 
 const FIND_BY_TAGS = gql`
   query FIND_BY_TAGS($tags: [TagFilter!], $first: Int!, $after: String) {
@@ -91,18 +91,17 @@ const ImageItem = ({ txid, withShadow = false }: { txid: string, withShadow?: bo
 };
 
 const Asset = () => {
-  const { search } = useLocation();
+  const queryParams = useQueryParams();
   const [ txid, setTxid ] = useState<string | null>(null);
   const [ txs, setTxs ] = useState<string[]>([]);
   const [ isReady, setIsReady ] = useState<boolean>(false);
 
   useEffect(() => {
-    const queryParam = new URLSearchParams(search);
-    const txid = queryParam.get('tx');
+    const txid = queryParams.get('tx');
     if (txid) {
       setTxid(txid);
     }
-  }, [ search]);
+  }, [ queryParams]);
 
   const { data, error } = useQuery(FIND_BY_TAGS, {
     variables: {
@@ -142,31 +141,7 @@ const Asset = () => {
       // get model attachment
       (async () => {
         try {
-          const txOwnerResult = await client.query({
-            query: GET_TX_OWNER,
-            variables: { id: txid },
-          });
-          const txOwner = txOwnerResult.data.transactions.edges[0].node.owner.address;
-        
-          // get attachments teransactions
-          const attachmentAvatarTags = [
-            { name: 'Protocol-Name', values: ['Fair Protocol'] },
-            { name: 'Operation-Name', values: ['Model Attachment'] },
-            { name: 'Attachment-Role', values: [ 'avatar'] },
-            { name: 'Model-Transaction', values: [ txid ] },
-          ];
-          const avatarAttachmentsResult = await client.query({
-            query: GET_LATEST_MODEL_ATTACHMENTS,
-            variables: {
-              tags: attachmentAvatarTags,
-              owner: txOwner,
-            },
-          });
-        
-          const avatarTxId = avatarAttachmentsResult?.data?.transactions?.edges[0]
-            ? avatarAttachmentsResult.data.transactions.edges[0].node.id
-            : '';
-  
+          const avatarTxId = await getAvatarTxId();
           if (avatarTxId) {
             setTxs([ avatarTxId ]);
             setIsReady(true);
@@ -178,6 +153,35 @@ const Asset = () => {
       })();
     }
   }, [ data, txid, setTxs, setIsReady ]);
+
+  const getAvatarTxId = async () => {
+    const txOwnerResult = await client.query({
+      query: GET_TX_OWNER,
+      variables: { id: txid },
+    });
+    const txOwner = txOwnerResult.data.transactions.edges[0].node.owner.address;
+  
+    // get attachments teransactions
+    const attachmentAvatarTags = [
+      { name: 'Protocol-Name', values: ['Fair Protocol'] },
+      { name: 'Operation-Name', values: ['Model Attachment'] },
+      { name: 'Attachment-Role', values: [ 'avatar'] },
+      { name: 'Model-Transaction', values: [ txid ] },
+    ];
+    const avatarAttachmentsResult = await client.query({
+      query: GET_LATEST_MODEL_ATTACHMENTS,
+      variables: {
+        tags: attachmentAvatarTags,
+        owner: txOwner,
+      },
+    });
+  
+    const avatarTxId = avatarAttachmentsResult?.data?.transactions?.edges[0]
+      ? avatarAttachmentsResult.data.transactions.edges[0].node.id
+      : '';
+
+    return avatarTxId;
+  };
 
   if (error) {
     return <Box sx={{

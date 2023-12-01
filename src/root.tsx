@@ -1,15 +1,14 @@
 import { ApolloProvider } from "@apollo/client";
 import { AppThemeProvider } from './context/theme';
 import { CssBaseline } from '@mui/material';
-// import Asset from "./components/asset";
-import { Outlet } from "react-router-dom";
 import { client } from "./utils/apollo";
+import Asset from "./components/asset";
 
 const Root = () => {
   return <ApolloProvider client={client}>
     <AppThemeProvider>
       <CssBaseline />
-      <Outlet />
+      <Asset />
     </AppThemeProvider>
   </ApolloProvider>
 };

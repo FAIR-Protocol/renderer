@@ -1,26 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import Root from './root'
-import './index.css'
-import { RouterProvider, createHashRouter } from 'react-router-dom';
-import Asset from './components/asset';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import Root from './root';
 
-const router = createHashRouter([
-  {
-    path: '/',
-    element: <Root />,
-    children: [
-      {
-        path: '',
-        element: <Asset />
-      }
-    ]    
-    // errorElement: <ErrorDisplay />,
-  },
-]);
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Root />
   </React.StrictMode>,
 )
